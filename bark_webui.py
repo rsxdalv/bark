@@ -171,6 +171,18 @@ padding: 0px;
    background: none;
  }
 
+
+div#styles_row {
+  min-height: 100px;
+
+}
+
+   body #styles_row  button {
+    
+position: absolute; 
+     
+   }
+
  
 body div.tiny_column {
   
@@ -1052,6 +1064,28 @@ def read_logs():
         return f.read()
 
 
+def update_option(option_list, key, value, extra_help=None):
+    # Make a copy of the list so we don't modify the original
+    option_list = option_list.copy()
+
+    # Look for the option we want to change
+    for i, (option_key, option_values) in enumerate(option_list):
+        if option_key == key:
+            # Make a copy of the dict so we don't modify the original
+            option_values = option_values.copy()
+
+            # Update the option
+            option_values["value"] = value
+            if extra_help:
+                option_values["help"] += " " + extra_help
+
+            # Create a new tuple and replace the old one in the list
+            option_list[i] = (option_key, option_values)
+            break
+
+    return option_list
+
+
 model_options = [
     (
         "text_use_gpu",
@@ -1090,6 +1124,11 @@ model_options = [
         },
     ),
 ]
+
+if generation.SUNO_HALF_PRECISION:
+    model_options = update_option(
+        model_options, "coarse_use_small", True, "(Default ON because of SUNO_HALF_PRECISION)"
+    )
 
 
 def preload_models_gradio(
@@ -2028,7 +2067,7 @@ with gr.Blocks(theme=default_theme, css=bark_console_style, title="Bark Infinity
 
                                     output_format = gr.Dropdown(
                                         ["wav", "mp3", "ogg", "flac", "mp4"],
-                                        value="mp4",
+                                        value="mp3",
                                         label="Audio File Output Format",
                                         info="(You can re-render wavs if you save .npzs)",
                                     )
@@ -2586,7 +2625,7 @@ with gr.Blocks(theme=default_theme, css=bark_console_style, title="Bark Infinity
                         )
 
                     with gr.Column(scale=1):
-                        max_audio_outputs = 8
+                        max_audio_outputs = 4
 
                         def variable_outputs_forward(k):
                             global last_audio_samples

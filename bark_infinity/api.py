@@ -785,16 +785,16 @@ def generate_audio_barki(
 
     if negative_text_prompt is not None or specific_npz_file_negative_prompt is not None:
         negative_text_prompt = negative_text_prompt.strip()
-        print(f"---->\nnegative_text_prompt: {negative_text_prompt}")
-        print(f"specific_npz_file_negative_prompt: {specific_npz_file_negative_prompt}")
+        # print(f"---->\nnegative_text_prompt: {negative_text_prompt}")
+        # print(f"specific_npz_file_negative_prompt: {specific_npz_file_negative_prompt}")
 
         negative_text_prompt_logits_scale = kwargs.get("negative_text_prompt_logits_scale", None)
         negative_text_prompt_divergence_scale = kwargs.get(
             "negative_text_prompt_divergence_scale", None
         )
 
-        print(f"negative_text_prompt_logits_scale: {negative_text_prompt_logits_scale}")
-        print(f"negative_text_prompt_divergence_scale: {negative_text_prompt_divergence_scale}")
+        # print(f"negative_text_prompt_logits_scale: {negative_text_prompt_logits_scale}")
+        # print(f"negative_text_prompt_divergence_scale: {negative_text_prompt_divergence_scale}")
 
         # negative_text_prompt_to_use = text
         negative_text_prompt_to_use = ""
@@ -816,31 +816,32 @@ def generate_audio_barki(
         ):
             negative_history_prompt_to_use = specific_npz_file_negative_prompt
 
-        negative_tokens, negative_logits = call_with_non_none_params(
-            generate_text_semantic,
-            text=negative_text_prompt_to_use,
-            history_prompt=negative_history_prompt_to_use,
-            temp=semantic_temp,
-            top_k=kwargs.get("semantic_top_k", None),
-            top_p=kwargs.get("semantic_top_p", None),
-            silent=silent,
-            min_eos_p=kwargs.get("semantic_min_eos_p", None),
-            max_gen_duration_s=kwargs.get("semantic_max_gen_duration_s", None),
-            allow_early_stop=kwargs.get("semantic_allow_early_stop", True),
-            # use_kv_caching=kwargs.get("semantic_use_kv_caching", True),
-            use_kv_caching=True,
-            semantic_use_mirostat_sampling=semantic_use_mirostat_sampling,
-            semantic_mirostat_tau=semantic_mirostat_tau,
-            semantic_mirostat_learning_rate=semantic_mirostat_learning_rate,
-            semantic_token_repeat_penalty=semantic_token_repeat_penalty,
-            semantic_inverted_p=semantic_inverted_p,
-            semantic_bottom_k=semantic_bottom_k,
-            return_logits=True,
-        )
-        # debug(f"negative_tokens: {negative_tokens}")
-        # debug(f"negative_logits: {negative_logits}")
+            negative_tokens, negative_logits = call_with_non_none_params(
+                generate_text_semantic,
+                text=negative_text_prompt_to_use,
+                history_prompt=negative_history_prompt_to_use,
+                temp=semantic_temp,
+                top_k=kwargs.get("semantic_top_k", None),
+                top_p=kwargs.get("semantic_top_p", None),
+                silent=silent,
+                min_eos_p=kwargs.get("semantic_min_eos_p", None),
+                max_gen_duration_s=kwargs.get("semantic_max_gen_duration_s", None),
+                allow_early_stop=kwargs.get("semantic_allow_early_stop", True),
+                # use_kv_caching=kwargs.get("semantic_use_kv_caching", True),
+                use_kv_caching=True,
+                semantic_use_mirostat_sampling=semantic_use_mirostat_sampling,
+                semantic_mirostat_tau=semantic_mirostat_tau,
+                semantic_mirostat_learning_rate=semantic_mirostat_learning_rate,
+                semantic_token_repeat_penalty=semantic_token_repeat_penalty,
+                semantic_inverted_p=semantic_inverted_p,
+                semantic_bottom_k=semantic_bottom_k,
+                return_logits=True,
+            )
+            # debug(f"negative_tokens: {negative_tokens}")
+            # debug(f"negative_logits: {negative_logits}")
     else:
-        print(f"Not using negative_text_prompt or specific_npz_file_negative_prompt.")
+        pass
+        # print(f"Not using negative_text_prompt or specific_npz_file_negative_prompt.")
 
     if semantic_tokens is None:
         semantic_tokens = call_with_non_none_params(
@@ -1299,6 +1300,9 @@ def generate_audio_long_from_gradio(**kwargs):
         clone_created_filepath,
     ) = generate_audio_long(**kwargs)
 
+    # if generation.OFFLOAD_CPU:
+    #    generation.clean_models()
+
     return (
         full_generation_segments,
         audio_arr_segments,
@@ -1620,8 +1624,6 @@ def generate_audio_long(
         else:
             print("No audio to write. Something may have gone wrong.")
     print(f"Saved to {final_filename_will_be}")
-
-    # generation.clean_models()
 
     return (
         full_generation_segments,
@@ -2361,8 +2363,13 @@ def startup_status_report(quick=True, gpu_no_details=False):
     gpu_memory = gpu_max_memory()
     status += f"\nGPU Memory: {gpu_memory} GB"
 
-    if gpu_memory is not None and gpu_memory < 4.1:
-        status += f"\n\nWARNING: GPU Memory is {gpu_memory} GB. Enabling SUNO_HALF_PRECISION to save memory."
+    if gpu_memory is not None and gpu_memory < 4.1 and gpu_memory > 2.0:
+        status += f"\n   WARNING: Your GPU memory is only {gpu_memory} GB. This is OK: enabling SUNO_HALF_PRECISION to save memory."
+        status += f"\n   However, if your GPU does have > 6GB of memory, Bark may be using your integrated GPU instead of your main GPU."
+        status += f"\n   Recommend using smaller/faster coarse model to increase speed on a weaker GPU, with only minor quality loss."
+        status += f"\n   (Go to Setting Tab, then click Apply Settings, coarse_use_small should have defaulted to checked)."
+        status += f"\n   If you are still getting memory errors, try closing all other applications. Bark can fit in 4GB, but it can be tight. If that fails you can use still use small text model (text_use_small parameter) but that does have a larger reduction in quality."
+        generation.SUNO_HALF_PRECISION = True
 
     status += f"\nSUNO_HALF_PRECISION: {generation.SUNO_HALF_PRECISION} (Default is False)"
     status += f"\nSUNO_HALF_BFLOAT16: {generation.SUNO_HALF_BFLOAT16} (Default is False)"

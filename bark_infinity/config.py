@@ -134,7 +134,7 @@ DEFAULTS = {
         (
             "output_format",
             {
-                "value": "mp4",
+                "value": "mp3",
                 "type": str,
                 "help": "(Output format. You can always re-render the uncompressed wav later if you save the speaker.npz files.)",
                 "choices": CHOICES["output_formats"],
