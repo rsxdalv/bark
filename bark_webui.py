@@ -531,13 +531,21 @@ def generate_audio_long_gradio(
     if split_character_jitter != "" and split_character_jitter is not None:
         kwargs["split_character_jitter"] = float(split_character_jitter)
 
-    if process_text_by_each is not None and process_text_by_each != "":
+    if (
+        process_text_by_each is not None
+        and process_text_by_each != ""
+        and process_text_by_each != []
+    ):
         kwargs["process_text_by_each"] = process_text_by_each
 
     if in_groups_of_size is not None:
         kwargs["in_groups_of_size"] = int(in_groups_of_size)
 
-    if group_text_by_counting is not None and group_text_by_counting != "":
+    if (
+        group_text_by_counting is not None
+        and group_text_by_counting != ""
+        and group_text_by_counting != []
+    ):
         kwargs["group_text_by_counting"] = group_text_by_counting
 
     if split_type_string is not None and split_type_string != "":
