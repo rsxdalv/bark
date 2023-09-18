@@ -1788,7 +1788,7 @@ with gr.Blocks(theme=default_theme, css=bark_console_style, title="Bark Infinity
                                         "For example for song lyrics, in the below 3 boxes pick: `line` then `4` then `line` this will split the text in groups of 4 lines each."
                                     )
                                     process_text_by_each = gr.Dropdown(
-                                        [
+                                        [   "",
                                             "word",
                                             "line",
                                             "sentence",
@@ -1803,7 +1803,7 @@ with gr.Blocks(theme=default_theme, css=bark_console_style, title="Bark Infinity
                                         # max_choices=1,
                                     )
                                     group_text_by_counting = gr.Dropdown(
-                                        [
+                                        [   "",
                                             "word",
                                             "line",
                                             "sentence",

@@ -281,6 +281,9 @@ def split_text(text: str, split_type: Optional[str] = None, split_type_quantity 
                 split_type_quantity_found = 0
                 current_segment = ''
             
+        if current_segment != "":
+            final_segmented_text.append(current_segment)
+
         return final_segmented_text
 
     logger.warning(
