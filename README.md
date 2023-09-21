@@ -124,7 +124,6 @@ conda activate pydml_torch2
 **make sure you see (pydml_torch2) in the corner again**. ***(pydml_torch2) C:\Users\YourName*** etc.
 You always want to see (pydyml_torch2) in the corner when installing and using Bark. If you don't see it from this point, you are in the wrong conda environment and need to type `conda activate pydml_torch2` again.
 
-```
 
 Now try typing
 ```
