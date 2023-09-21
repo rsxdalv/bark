@@ -24,7 +24,7 @@ Scroll down to [Bark AMD (DirectML) MANUAL Install](#bark-amd-directml-manual-in
 ## Bark Install Steps
 
 1. Download the latest zip file from the releases page: https://github.com/JonathanFly/bark-installer/releases 
-    * Direct Link: https://github.com/JonathanFly/bark-installer/releases/download/bark-infinity-v0.23/bark-infinity-v0.23.zip
+    * Direct Link: https://github.com/JonathanFly/bark-installer/releases/download/bark-infinity-v0.23b/bark-infinity-v0.23.zip
 2. Extract the zip file into a directory with no spaces in the filename. This is the folder where Bark will be installed.
 3. Click on `INSTALL_BARK_INFINITY.bat` (you do not need to be administrator)
 4. If the install finished with no errors, close that terminal window. Close any other open command line windows as well. 
@@ -41,6 +41,7 @@ Scroll down to [Bark AMD (DirectML) MANUAL Install](#bark-amd-directml-manual-in
 
 ## Bark Uninstall
   1. Delete the entire directory where you installed Bark.
+     1. **⚠️** **Any Bark samples you made will be in that bark folder**, so be sure to save anything you want before deleting the bark folder.
   2. Delete the Bark models. The Bark models will be in your Huggingface Cache directory. The location should be printed when you run Bark in the console as `Bark Model Location:` or `HF_HOME` (for some older installs). The default location is `C:\Users\YourWindowsUserName\.cache\` in Windows. (You can generally delete anything in there and it will redownload if needed.) 
 
 # Where Can I Get Bark Voices?
