@@ -1,81 +1,92 @@
-# 🚀 BARK INFINITY, Voices are Just Sounds. 🎶 🌈✨🚀 
+# 🚀 BARK INFINITY: A Voice Is A Sound and a Sound Is a Voice 🎶 🌈✨🚀 
 
-#### Why this fork ? 
-
-I do not have a GPU so I need Google Colab for running the python code, as there are notebooks available in this project my focus is here.
-
+### Colab Notebooks: These need updating, but they should work soon if they have a problem at the moment.
 [![Open In Colab](https://tinyurl.com/3m5bcd9h)](https://colab.research.google.com/github/steinhaug/bark-infinity/blob/main/notebooks/Bark-Infinity.ipynb)
 [![Open In Colab](https://tinyurl.com/jjbfsbk2)](https://colab.research.google.com/github/steinhaug/bark-infinity/blob/main/notebooks/Bark_Infinity_Long_Form_Audio_Colab.ipynb)
 
-<br><br><br><br>
+### Bark on an AMD GPU? 
+Scroll down to [Bark AMD (DirectML) MANUAL Install](#bark-amd-directml-manual-install-)
+# 🎉 Bark INFINITY NVIDIA Automatic Windows Installer 🎉  
 
+### ⚠️ Note: make sure you fully extract the .zip file before running the .bat files.
 
-# 🎉 Bark INFINITY Automatic Windows Installer, NVIDIA (CPU update soon) 🎉  
+## Bark Install Prerequisites: 
 
+1. **Just the regular Windows NVIDIA drivers**. 
+   1. You don't need anything else installed.
+   2. You don't need Python.
+   3. You don't need Pytorch. 
+   4. You don't need anything with `CUDA` in the name.
+   5. In fact, other Python/CUDA things on your system could cause problems, if those were not installed in isolated environment like a conda or venv.
+   6. To check, you can try going to a command line and typing `python --version` or `pip list` and seeing what shows up. Ideally you want those commands to do nothing because that means nothing is installed on your base windows system itself.
+2. *(Optional But Recommended)* **The Windows Terminal** https://apps.microsoft.com/store/detail/windows-terminal/9N0DX20HK701 -- Bark still has a lot of text output and it's looks nicer and is easier to read in the Windows Terminal. But you can also use the regular Windows Command Prompt. (Color text is coming back so you will want this later.)
 
-### ⚠️ Note: make sure you fully extract the .zip file before running the .bat files. Check this image if you aren't sure: [install_help.PNG](https://raw.githubusercontent.com/JonathanFly/bark/main/one-click-bark-installer/install_help.PNG)
+## Bark Install Steps
 
-## Install Prerequisites: 
-
-1. **Just the regular Windows NVIDIA drivers**. You don't need anything else installed ahead of time. Not Pytorch. Nothing with `Cuda` in the name. Not even Python. In fact if you installed anything on your Windows system without using a venv or conda, it may cause a problem.
-2. *(Optional But Recommended)* The Windows Terminal https://apps.microsoft.com/store/detail/windows-terminal/9N0DX20HK701 -- Bark still has a lot of text output and it's looks nicer and is easier to read in the Windows Terminal. But you can also use the regular Windows Command Prompt.
-
-## Install Steps
-
-1. Download the latest zip file from the releases page: https://github.com/JonathanFly/bark/releases
-2. Extract the zip file into a directory. Choose a place where Bark will be installed. You will unzip about six small files.
-3. Click on `INSTALL_bark_infinity_windows.bat` (you should not need to be administrator)
+1. Download the latest zip file from the releases page: https://github.com/JonathanFly/bark-installer/releases 
+    * Direct Link: https://github.com/JonathanFly/bark-installer/releases/download/bark-infinity-v0.23/bark-infinity-v0.23.zip
+2. Extract the zip file into a directory with no spaces in the filename. This is the folder where Bark will be installed.
+3. Click on `INSTALL_BARK_INFINITY.bat` (you do not need to be administrator)
 4. If the install finished with no errors, close that terminal window. Close any other open command line windows as well. 
-5. Click `LAUNCH_already_installed_bark_infinity_windows.bat`
+5. Click `START_BARK_INFINITY.bat` for the GUI version, or `COMMAND_LINE_BARK_INFINITY.bat` for the command line version.
 
-## Install Problems
+## Bark Install Problems
 
-1. If you get a Windows permissions error, I seemed to get it randomly. Just trying again usually fixed it. You don't even need to restart from scratch, just rerun the script that threw the error.
+1. **Windows permissions error**: Check for antivirus or security settings that may be blocking the installer. Can also be random and retrying the installer again simply fixes it.
+2. **CondaSSLError, SSL Certificate Error**: This is an odd one. If your country or government has an online ID card, you may have to uninstall the government SSL certificates. 
+
+### Install Trouble Shooting: 
+1. Try `TROUBLESHOOT_BARK_INFINITY.bat` for some options.
+2. **Still Not Working?** Feel free to @ me on Bark Official Discord, username "Jonathan Fly" jonathanfly.
+
+## Bark Uninstall
+  1. Delete the entire directory where you installed Bark.
+  2. Delete the Bark models. The Bark models will be in your Huggingface Cache directory. The location should be printed when you run Bark in the console as `Bark Model Location:` or `HF_HOME` (for some older installs). The default location is `C:\Users\YourWindowsUserName\.cache\` in Windows. (You can generally delete anything in there and it will redownload if needed.) 
+
+# Where Can I Get Bark Voices?
+
+1. Search the [Bark Discord](https://suno.ai/discord) for voices. The Bark Discord is abuzz with Suno's new music 'Chirp' model, but you can find many great voices posted in chat in the months since Bark was released.
+2. Bark Speaker Directory from rsxdalv: https://github.com/rsxdalv/bark-speaker-directory
+3. You can nag me in Discord and if I'm online I might have some handy. 
+4. Wait: I keep meaning to organize a bunch of good voices and update this repo.
+# How To Make Bark Faster? 
+
+1. **Tradeoff A Little Quality**: Use just the small **coarse** Bark model, leave other two models (**text** and **fine**) regular sized. You can do this in the Gradio UI or the command line with an option. 
+2. **Try the new Huggingface Bark Implementation** and see https://huggingface.co/blog/ optimizing-bark with optimization suggestions.
+3. **Try Pytorch nightly**, if you know your way around the installation.
+4. **Try optimizing numpy** and other related libraries **CPU** libraries, because bark may be bottlenecked somewhat on CPU. For example Intel MKL may be worth a shot so you could try something like this:
+5. **Linux** (or WSL) seems generally a little faster than Windows, but I'm not sure if this is always true.
+
+### Intel MKL Install: Maybe Faster? 
+
+This is not part of the installer because it can break things, here for people who comfortable tweaking and rebuilding their Python conda environments.
+
+1. Type `COMMAND_LINE_BARK_INFINITY.bat`
+2. Type `python bark_perform.py --run_numpy_benchmark True` 
+3. Note the benchmark times.
+4. Install MKL exe in Windows itself. https://www.intel.com/content/www/us/en/developer/tools/oneapi/onemkl-download.html 
+5. Install MKL in Python. Theres's a few different ways to install, one way you can try:
+   1. Run `COMMAND_LINE_BARK_INFINITY.bat`
+   2. Type:
+      ```
+      conda install -y mkl mkl-service mkl_fft libcblas liblapacke liblapack blas-devel mkl-include mkl_random mkl-devel mkl-include libblas=*=*mkl mkl-static intel-openmp blas=*=*mkl -c intel -c conda-forge --solver=libmamba
+      ```
+6. Rerun steps 1 and 2. Is it faster? If so, some chance Bark may be too.
 
 
-### Command Line: 
-Click `TROUBLESHOOT_bark_setup_manually_by_entering_the_conda_environment.bat`
-```
-cd bark
-python bark_perform.py
-python bark_perform.py --help
-```
-### Trouble Shooting: 
-Click `TROUBLESHOOT_bark_setup_manually_by_entering_the_conda_environment.bat`
+### How To Make Bark Faster on CPU or Apple hardware?
+1. On apple, try setting `SUNO_ENABLE_MPS` True
+2. Watch this repo: https://github.com/PABannier/bark.cpp
 
-```
------Manual Updates-----
-Type `conda update -y -n base conda` to update conda.
-Type `conda update -y --all --solver=libmamba` to update all packages.
-Type `conda clean --all` to free up disk space from unused versions.
-Type `ffdl install -U --add-path` to try to fix ffmpeg not not problems.
-Type `pip install -r requirements-extra.txt` to try to manually install pip requirements.
-
-Type `conda env update -y -f environment-cuda-installer.yml --prune --solver=libmamba` to update your env manually, if the .yml changed.
-Type `cd bark` to enter the bark directory and then `git pull` to update the repo code.
-Type `git branch` to view branches and then
-Type `git checkout <branch_name>` to switch branches.
-(You can try `git checkout bark_amd_directml_test` branch if you have an AMD GPU)
-
------Still Not Working?-----
-Go ahead and @ me on Bark Official Discord, username "Jonathan Fly" jonathanfly. 
-Don't worry about waking me up with a message, my Discord never makes audible alerts.
-
------How do I get out of here?-----
-Type 'conda deactivate' to exit this environment and go back to normal terminal.
-```
-
-![LAUNCH_already_installed_bark_infinity_windows.bat](https://github.com/JonathanFly/bark/assets/163408/fcd91d15-6bee-44c7-8c99-95ca48fbc1d5)
+# Who Am I?
+Sometimes I post at [twitter.com/jonathanfly](https://twitter.com/jonathanfly)
 
 
+# 🎉Bark AMD (DirectML) MANUAL Install 🎉
 
-# 🎉 Pytorch 2.0 Bark AMD Install Test Pytorch 2.0 🎉
+An expensive AMD card will be a lot faster than using CPU, but a lot slower than a much less-expensive NVIDIA GPU like a 3060. If you really know your way around linux some people have reportedly compiled custom ROCm pytorch and say they got Bark working on AMD pretty decently - but there's no guide that I know of. This AMD install uses DirectML instead of of ROCm, easier but slower.
 
-
-**DirectML works on AMD in Pytorch 2.0 Confirmed works.** 
-It's not super fast but it's a lot faster than CPU.
-
-Bark AMD DirectML Instructions.
+## Bark AMD DirectML Instructions.
 
 What is DirectML? 
 https://learn.microsoft.com/en-us/windows/ai/directml/gpu-pytorch-windows
@@ -83,7 +94,6 @@ https://learn.microsoft.com/en-us/windows/ai/directml/gpu-pytorch-windows
 Install Miniconda. https://repo.anaconda.com/miniconda/Miniconda3-py310_23.3.1-0-Windows-x86_64.exe
 
 Then go to start menu and start a new "Ananconda Prompt" not regular windows command line 
-
 
 ```
 conda update -y conda
@@ -111,7 +121,10 @@ Then go back start menu and start a new "Ananaconda Prompt". This should be same
 ```
 conda activate pydml_torch2
 ```
-make sure you see (pydml_torch2) in the corner again. ***(pydml_torch2) C:\Users\YourName*** etc.
+**make sure you see (pydml_torch2) in the corner again**. ***(pydml_torch2) C:\Users\YourName*** etc.
+You always want to see (pydyml_torch2) in the corner when installing and using Bark. If you don't see it from this point, you are in the wrong conda environment and need to type `conda activate pydml_torch2` again.
+
+```
 
 Now try typing
 ```
@@ -120,18 +133,18 @@ ffmpeg -version
 
 Do you see ffmpeg 6.0? If it doesn't work you can keep going and you can use .wav file outputs, and fix it later.
 
-Now the big conda install command. This could take 5 to 15 minutes, and if you have a slow internet it could even take hours, because it downloads multiple gigabytes. So if looks like it's frozen, let it go. Check your task manager and see if it's downloading.
+Now the big conda install command. This could take 5 to 15 minutes, and if you have a slow internet it could even take hours, because it downloads multiple gigabytes. So if looks like it's frozen, let it go. Check your task manager and see if it's downloading. 
 
 ### For testing torch 2.0, just some giant pip installs:
 ```
-pip install torch==2.0.0 torchvision==0.15.1 torch-directml==0.2.0.dev230426 opencv-python torchvision==0.15.1 wget torch-directml==0.2.0.dev230426 pygments numpy pandas tensorboard matplotlib tqdm pyyaml boto3 funcy torchaudio transformers pydub pathvalidate rich nltk chardet av hydra-core>=1.1 einops scipy num2words pywin32 ffmpeg ffmpeg-python sentencepiece spacy==3.5.2 librosa jsonschema pytorch_lightning==1.9.4
+pip install torch==2.0.0 torchvision==0.15.1 torch-directml==0.2.0.dev230426 opencv-python torchvision==0.15.1 wget pygments numpy pandas tensorboard matplotlib tqdm pyyaml boto3 funcy torchaudio transformers pydub pathvalidate rich nltk chardet av hydra-core>=1.1 einops scipy num2words pywin32 ffmpeg ffmpeg-python sentencepiece spacy==3.5.2 librosa jsonschema pytorch_lightning==1.9.4
 
 pip install encodec flashy>=0.0.1 audiolm_pytorch==1.1.4 demucs 
 
 pip install universal-startfile hydra_colorlog julius soundfile==0.12.1 gradio>=3.35.2 rich_argparse flashy>=0.0.1 ffmpeg_downloader rich_argparse devtools vector_quantize_pytorch
 
 pip install https://github.com/Sharrnah/fairseq/releases/download/v0.12.4/fairseq-0.12.4-cp310-cp310-win_amd64.whl 
-``````
+```
 
 First set a SUNO_USE_DIRECTML variable. This tells Bark to use DirectML. If this doesn't work you can edit `/bark_infinity/config.py`` and set `SUNO_USE_DIRECTML`` to `True`` in the `DEFAULTS`` section.
 ```
@@ -144,10 +157,11 @@ git clone https://github.com/JonathanFly/bark.git
 cd bark
 ```
 Change to the AMD Test Version
+
+Note: (you may be able to skip `git checkout bark_amd_directml_test` and use main branch, if not, you will be able to soon)
 ```
 git checkout bark_amd_directml_test
 ```
-
 Now try running it. Bark has to download all the models the first time it runs, so it might look frozen for awhile. It's another 10 gigs of files. 
 ```
 python bark_perform.py
@@ -162,7 +176,7 @@ python bark_webui.py
 Things that don't work:
 1. Voice Cloning (might work?)
 2. Top_k and top_p
-3. Probably more things I haven't tested.
+3. Probably more things I haven't tested. 
 
 ### Start Back UI Later
 1. Click Anaconda Prompt in start menu
@@ -170,132 +184,11 @@ Things that don't work:
 3. cd bark
 4. `python bark_webui.py`
    
-### Make it faster? (Note for later, don't try yet)
-
-1. Install MKL exe https://www.intel.com/content/www/us/en/developer/tools/oneapi/onemkl-download.html
-```
-conda install -y mkl mkl-service mkl_fft libcblas liblapacke liblapack blas-devel mkl-include mkl_random mkl-devel mkl-include libblas=*=*mkl mkl-static intel-openmp blas=*=*mkl -c intel -c conda-forge --solver=libmamba
-```
-
-# 🏹↗️ This AMD Pytorch 1.13.1 (slower)
-
-```
-conda update -y conda
-conda update -y -n base conda
-conda install -y -n base conda-libmamba-solver
-conda create --name pydml -y python=3.10.6
-conda activate pydml
-```
-
-make sure you see (pydml) in the corner of of your prompt. 
-***(pydml) C:\Users\YourName***
-
-```
-conda install -y pip git --solver=libmamba
-conda update -y --all --solver=libmamba
-
-pip install ffmpeg_downloader
-ffdl install -U --add-path
-```
-Now quit out of the terminal and restart. We need ffmpeg in the path, which means you need to be able to type `ffmpeg -version` and have it work. If you close and restart, you should be able to do that.
-
-So close the terminal, close all window command lines or terminals to be sure.
-Then go back start menu and start a new "Ananaconda Prompt". This should be same you started the install.
-
-```
-conda activate pydml
-```
-make sure you see (pydml) in the corner again. ***(pydml) C:\Users\YourName*** etc.
-
-Now try typing
-```
-ffmpeg -version
-```
-
-Do you see ffmpeg 6.0? If it doesn't work you can keep going and you can use .wav file outputs, and fix it later.
-
-Now the big conda install command. This could take 5 to 15 minutes, and if you have a slow internet it could even take hours, because it downloads multiple gigabytes. So if looks like it's frozen, let it go. Check your task manager and see if it's downloading.
-
-```
-conda install -y pytorch==1.13.1 pygments numpy pandas tensorboard matplotlib tqdm pyyaml boto3 funcy torchvision==0.14.1 torchaudio==0.13.1 cpuonly transformers pydub pathvalidate rich nltk chardet av hydra-core>=1.1 einops scipy num2words pywin32 ffmpeg ffmpeg-python sentencepiece spacy==3.5.2 librosa jsonschema -c pytorch -c conda-forge --solver=libmamba
-```
-Now that's done a few more things we need, that are not in conda. So we have to use pip.
-
-This is where the instal can go wrong up. **We don't want anything to upgrade either torch or torchaudio to torch 2.0**, and it often happens by accident. (As far I know AMD DirectML Windows only works in Torch 1.13, not 2.0. If anyone knows different let me know!) 
-
-If you somehow end up installing torch 2.0. Try `pip uninstall torch torchaudio` and then redo the big long conda install command (the one with `pytorch==1.13.1` in it). 
-
-```
-pip install universal-startfile hydra_colorlog julius soundfile==0.12.1 gradio>=3.35.2 rich_argparse flashy>=0.0.1 ffmpeg_downloader rich_argparse devtools
-```
 
 
-```
-pip install encodec flashy>=0.0.1 audiolm_pytorch==1.1.4 demucs --no-dependencies
+# ⚠️⬇️⬇️ Everything below this point is out of date - may have some useful info. ⬇️⬇️ ⚠️
 
-pip install https://github.com/Sharrnah/fairseq/releases/download/v0.12.4/fairseq-0.12.4-cp310-cp310-win_amd64.whl --no-dependencies
-```
-
-And now finally the actual `torch-directml` that has GPU support. I found installing this last seems best, but you could try doing it earlier. 
-```
-pip install torch-directml==0.1.13.1.dev230413
-```
-If everything worked, you might be done.
-Now we install Bark. And then run one command line test first with bark_perform.py
-
-First set a SUNO_USE_DIRECTML variable. This tells Bark to use DirectML. If this doesn't work you can edit `/bark_infinity/config.py`` and set `SUNO_USE_DIRECTML`` to `True`` in the `DEFAULTS`` section.
-```
-set SUNO_USE_DIRECTML=1
-```
-
-Download Bark:
-```
-git clone https://github.com/JonathanFly/bark.git
-cd bark
-```
-Change to the AMD Test Version
-```
-git checkout bark_amd_directml_test
-```
-
-Now try running it. Bark has to download all the models the first time it runs, so it might look frozen for awhile. It's another 10 gigs of files. 
-```
-python bark_perform.py
-```
-When I tested this install, `bark_perform.py` seemed to freeze at downloading models without making progress. I don't know if was a fluke, but I ran `python bark_webui.py` and it downloaded them fine.
-
-Start the Bark UI
-```
-python bark_webui.py
-```
-
-Things that don't work:
-1. Voice Cloning
-2. Top_k and top_p
-3. Probably more things I haven't tested.
-
-### Start Back UI Later
-1. Click Anaconda Prompt in start menu
-2. `conda activate pydml`
-3. cd bark
-4. `python bark_webui.py`
-   
-### Make it faster? (Note for later, don't try yet)
-
-1. Install MKL exe https://www.intel.com/content/www/us/en/developer/tools/oneapi/onemkl-download.html
-```
-conda install -y mkl mkl-service mkl_fft libcblas liblapacke liblapack blas-devel mkl-include mkl_random mkl-devel mkl-include libblas=*=*mkl mkl-static intel-openmp blas=*=*mkl -c intel -c conda-forge --solver=libmamba
-```
-
-
-⚡ Low GPU memory? No problem. CPU offloading. ⚡ Somewhat easy install?
-
-# 🎉 Install Bark Infinity Any OS With Mamba (or Conda) 🎉  
-
-
-## Mamba Install (Still Works) (Should work...)
-
-
+## Manual Windows Mamba Install
 
 (Mamba is a fast version of conda. They should work the same if you install either one, just change mamba to conda or vice-versa.)
 
@@ -309,8 +202,7 @@ You don't have to but it may display the output from the bark commands better. W
 
 1. Go here: [https://github.com/conda-forge/miniforge#mambaforge](https://github.com/conda-forge/miniforge#mambaforge)
 
-2. 
-3. Download a **Python 3.10 Miniconda3** installer for your OS.  Windows 64-bit, macOS, and Linux probably don't need a guide. 
+2. Download a **Python 3.10 Miniconda3** installer for your OS.  Windows 64-bit, macOS, and Linux probably don't need a guide. 
   a. Install the **Mambaforge** for your OS, not specifically Windows. OSX for OSX etc.
   b. Don't install Mambaforge-pypy3. (It probably works fine, it is just not what I tested.) Install the one above that, just plain **Mambaforge**. Or you can use **Conda**, Mamba should faster but sometimes Conda may be more compatible. 
   
@@ -328,8 +220,6 @@ When you start **"Anaconda Prompt (miniconda3)"** you will be in a directory, in
 
 6. Type the next commands _exactly_. Hit "Y" for yes where you need to:
 
-
-
 ```
 mamba update -y mamba
 mamba create --name bark-infinity python=3.10
@@ -340,10 +230,10 @@ mamba install -y -k cuda ninja git pip -c nvidia/label/cuda-11.7.0 -c nvidia
 pip install torch==2.0.1+cu117 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu117
 ## END NVIDIA GPU ONLY
 
-## CPU ONLY, Or MacOS
+##### CPU ONLY LINES START HERE (Also MacOS)
 mamba install -y -k ninja git
 pip install torch torchvision torchaudio
-## END CPU ONLY, Or MacOS
+##### CPU ONLY LINES END HERE (Also MacOS)
 
 
 ## WINDOWS ONLY fairseq
@@ -391,8 +281,7 @@ git pull
 pip install -r barki-allpip.txt --upgrade
 ```
 
-I have so much good Bark I need to post at [twitter.com/jonathanfly](https://twitter.com/jonathanfly)
-
+# 🌟 Original Bark Infinity Launch README (Preserved Mostly For Amusement) 🌟
 
 # 🌠 The Past: 🌠
 
@@ -404,11 +293,8 @@ Bark Infinity _evolved_ 🧬, expanding across dimensions 🌐. Infinite Length 
 
 # 🔜🚀 The Future: 🚀
 
-🚀 Bark Infinity 🐾 was born in the command line, and Bark Infinity grew within the command line. We live in the era where old fashioned command line applications are wrapped in ✨fancy Gradio Uis🌈 and 🖱️One Click Installers. We all must adapt to a changing world, right? *Or do we?* 
+🚀 (**Non emoji real answer**: A node based UI like ComfyUI, if Gradio 4.0 makes Audio a lot better.)
 
-
-
-## 🌟 (OLD NOT UPDATED) README 🌟 __ 
 
 ### 1. INFINITY VOICES 🔊🌈
 Discover cool new voices and reuse them. Performers, musicians, sound effects, two party dialog scenes. Save and share them. Every audio clip saves a speaker.npz file with the voice. To reuse a voice, move the generated speaker.npz file (named the same as the .wav file) to the "prompts" directory inside "bark" where all the other .npz files are.
@@ -444,293 +330,6 @@ Truly we live in the future. It might take 50 tries to get a joke and it's proba
 https://user-images.githubusercontent.com/163408/233746872-cac78447-8e87-49e7-b79b-28ec51264019.mp4
 
 
+# Be sure to check out the official Suno repo README for updates as well
 
-_**BARK INFINITY** is possible because Bark is such an amazingly simple and powerful model that even I could poke around easily._
-
-_For music, I recommend using the --split_by_lines and making sure you use a multiline string as input. You'll generally get better results if you manually split your text, which I neglected to provide an easy way to do because I stayed too late listening to 100 different Bark versions of a scene an Andor and failed Why was 6 afraid of 7 jokes._
-
-## 📝 Command Line Options 📝 (Some of these parameters are not implemented.)
-
-Type --help or use the GUI
-```
-python bark_perform.py --help
-```
-### prompt_file input text file example
-```myprompts.txt 
-This is the first prompt.
-Lots of text here maybe. 
-As long as you want.
-
-AAAAA
-
-This is the second prompt.
-
-AAAAA
-
-This is the third prompt.
-```
-
-```
-python bark_perform.py --prompt_file myprompts.txt --split_input_into_separate_prompts_by string --split_input_into_separate_prompts_by_value AAAAA --output_dir myprompts_samples
-```
-
-
-# 🐶 Bark Original Readme 🐶
-
-[![](https://dcbadge.vercel.app/api/server/J2B2vsjKuE?style=flat&compact=True)](https://discord.gg/J2B2vsjKuE)
-[![Twitter](https://img.shields.io/twitter/url/https/twitter.com/OnusFM.svg?style=social&label=@OnusFM)](https://twitter.com/OnusFM)
-<a href="http://www.repostatus.org/#active"><img src="http://www.repostatus.org/badges/latest/active.svg" /></a>
-
-[Examples](https://suno-ai.notion.site/Bark-Examples-5edae8b02a604b54a42244ba45ebc2e2) • [Suno Studio Waitlist](https://3os84zs17th.typeform.com/suno-studio) • [Updates](#-updates) • [How to Use](#-usage-in-python) • [Installation](#-installation) • [FAQ](#-faq)
-
-[//]: <br> (vertical spaces around image)
-<br>
-<p align="center">
-<img src="https://user-images.githubusercontent.com/5068315/235310676-a4b3b511-90ec-4edf-8153-7ccf14905d73.png" width="500"></img>
-</p>
-<br>
-
-Bark is a transformer-based text-to-audio model created by [Suno](https://suno.ai). Bark can generate highly realistic, multilingual speech as well as other audio - including music, background noise and simple sound effects. The model can also produce nonverbal communications like laughing, sighing and crying. To support the research community, we are providing access to pretrained model checkpoints, which are ready for inference and available for commercial use.
-
-## ⚠ Disclaimer
-Bark was developed for research purposes. It is not a conventional text-to-speech model but instead a fully generative text-to-audio model, which can deviate in unexpected ways from provided prompts. Suno does not take responsibility for any output generated. Use at your own risk, and please act responsibly.
-
-## 🎧 Demos  
-
-[![Open in Spaces](https://img.shields.io/badge/🤗-Open%20in%20Spaces-blue.svg)](https://huggingface.co/spaces/suno/bark)
-[![Open on Replicate](https://img.shields.io/badge/®️-Open%20on%20Replicate-blue.svg)](https://replicate.com/suno-ai/bark)
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1eJfA2XUa-mXwdMy7DoYKVYHI1iTd9Vkt?usp=sharing)
-
-## 🚀 Updates
-
-**2023.05.01**
-- ©️ Bark is now licensed under the MIT License, meaning it's now available for commercial use!  
-- ⚡ 2x speed-up on GPU. 10x speed-up on CPU. We also added an option for a smaller version of Bark, which offers additional speed-up with the trade-off of slightly lower quality. 
-- 📕 [Long-form generation](notebooks/long_form_generation.ipynb), voice consistency enhancements and other examples are now documented in a new [notebooks](./notebooks) section.
-- 👥 We created a [voice prompt library](https://suno-ai.notion.site/8b8e8749ed514b0cbf3f699013548683?v=bc67cff786b04b50b3ceb756fd05f68c). We hope this resource helps you find useful prompts for your use cases! You can also join us on [Discord](https://discord.gg/J2B2vsjKuE), where the community actively shares useful prompts in the **#audio-prompts** channel.  
-- 💬 Growing community support and access to new features here: 
-
-     [![](https://dcbadge.vercel.app/api/server/J2B2vsjKuE)](https://discord.gg/J2B2vsjKuE)
-
-- 💾 You can now use Bark with GPUs that have low VRAM (<4GB).
-
-**2023.04.20**
-- 🐶 Bark release!
-
-## 🐍 Usage in Python
-
-<details open>
-  <summary><h3>🪑 Basics</h3></summary>
-
-```python
-from bark import SAMPLE_RATE, generate_audio, preload_models
-from scipy.io.wavfile import write as write_wav
-from IPython.display import Audio
-
-# download and load all models
-preload_models()
-
-# generate audio from text
-text_prompt = """
-     Hello, my name is Suno. And, uh — and I like pizza. [laughs] 
-     But I also have other interests such as playing tic tac toe.
-"""
-audio_array = generate_audio(text_prompt)
-
-# save audio to disk
-write_wav("bark_generation.wav", SAMPLE_RATE, audio_array)
-  
-# play text in notebook
-Audio(audio_array, rate=SAMPLE_RATE)
-```
-
-[pizza.webm](https://user-images.githubusercontent.com/5068315/230490503-417e688d-5115-4eee-9550-b46a2b465ee3.webm)
-
-</details>
-
-<details open>
-  <summary><h3>🌎 Foreign Language</h3></summary>
-<br>
-Bark supports various languages out-of-the-box and automatically determines language from input text. When prompted with code-switched text, Bark will attempt to employ the native accent for the respective languages. English quality is best for the time being, and we expect other languages to further improve with scaling. 
-<br>
-<br>
-
-```python
-
-text_prompt = """
-    추석은 내가 가장 좋아하는 명절이다. 나는 며칠 동안 휴식을 취하고 친구 및 가족과 시간을 보낼 수 있습니다.
-"""
-audio_array = generate_audio(text_prompt)
-```
-[suno_korean.webm](https://user-images.githubusercontent.com/32879321/235313033-dc4477b9-2da0-4b94-9c8b-a8c2d8f5bb5e.webm)
-  
-*Note: since Bark recognizes languages automatically from input text, it is possible to use for example a german history prompt with english text. This usually leads to english audio with a german accent.*
-
-</details>
-
-<details open>
-  <summary><h3>🎶 Music</h3></summary>
-Bark can generate all types of audio, and, in principle, doesn't see a difference between speech and music. Sometimes Bark chooses to generate text as music, but you can help it out by adding music notes around your lyrics.
-<br>
-<br>
-
-```python
-text_prompt = """
-    ♪ In the jungle, the mighty jungle, the lion barks tonight ♪
-"""
-audio_array = generate_audio(text_prompt)
-```
-[lion.webm](https://user-images.githubusercontent.com/5068315/230684766-97f5ea23-ad99-473c-924b-66b6fab24289.webm)
-</details>
-
-<details open>
-<summary><h3>🎤 Voice Presets</h3></summary>
-  
-Bark supports 100+ speaker presets across [supported languages](#supported-languages). You can browse the library of speaker presets [here](https://suno-ai.notion.site/8b8e8749ed514b0cbf3f699013548683?v=bc67cff786b04b50b3ceb756fd05f68c), or in the [code](bark/assets/prompts). The community also often shares presets in [Discord](https://discord.gg/J2B2vsjKuE).
-
-Bark tries to match the tone, pitch, emotion and prosody of a given preset, but does not currently support custom voice cloning. The model also attempts to preserve music, ambient noise, etc.
-<br>
-<br>
-
-```python
-text_prompt = """
-    I have a silky smooth voice, and today I will tell you about 
-    the exercise regimen of the common sloth.
-"""
-audio_array = generate_audio(text_prompt, history_prompt="v2/en_speaker_1")
-```
-
-[sloth.webm](https://user-images.githubusercontent.com/5068315/230684883-a344c619-a560-4ff5-8b99-b4463a34487b.webm)
-</details>
-
-### Generating Longer Audio
-  
-By default, `generate_audio` works well with around 13 seconds of spoken text. For an example of how to do long-form generation, see this [example notebook](notebooks/long_form_generation.ipynb).
-
-<details>
-<summary>Click to toggle example long-form generations (from the example notebook)</summary>
-
-[dialog.webm](https://user-images.githubusercontent.com/2565833/235463539-f57608da-e4cb-4062-8771-148e29512b01.webm)
-
-[longform_advanced.webm](https://user-images.githubusercontent.com/2565833/235463547-1c0d8744-269b-43fe-9630-897ea5731652.webm)
-
-[longform_basic.webm](https://user-images.githubusercontent.com/2565833/235463559-87efe9f8-a2db-4d59-b764-57db83f95270.webm)
-
-</details>
-
-
-
-
-## 💻 Installation
-
-```
-pip install git+https://github.com/suno-ai/bark.git
-```
-
-or
-
-```
-git clone https://github.com/suno-ai/bark
-cd bark && pip install . 
-```
-*Note: Do NOT use 'pip install bark'. It installs a different package, which is not managed by Suno.*
-
-
-## 🛠️ Hardware and Inference Speed
-
-Bark has been tested and works on both CPU and GPU (`pytorch 2.0+`, CUDA 11.7 and CUDA 12.0).
-
-On enterprise GPUs and PyTorch nightly, Bark can generate audio in roughly real-time. On older GPUs, default colab, or CPU, inference time might be significantly slower. For older GPUs or CPU you might want to consider using smaller models. Details can be found in out tutorial sections here.
-
-The full version of Bark requires around 12GB of VRAM to hold everything on GPU at the same time. 
-To use a smaller version of the models, which should fit into 8GB VRAM, set the environment flag `SUNO_USE_SMALL_MODELS=True`.
-
-If you don't have hardware available or if you want to play with bigger versions of our models, you can also sign up for early access to our model playground [here](https://3os84zs17th.typeform.com/suno-studio).
-
-## ⚙️ Details
-
-Bark is fully generative tex-to-audio model devolved for research and demo purposes. It follows a GPT style architecture similar to [AudioLM](https://arxiv.org/abs/2209.03143) and [Vall-E](https://arxiv.org/abs/2301.02111) and a quantized Audio representation from [EnCodec](https://github.com/facebookresearch/encodec). It is not a conventional TTS model, but instead a fully generative text-to-audio model capable of deviating in unexpected ways from any given script. Different to previous approaches, the input text prompt is converted directly to audio without the intermediate use of phonemes. It can therefore generalize to arbitrary instructions beyond speech such as music lyrics, sound effects or other non-speech sounds.
-
-Below is a list of some known non-speech sounds, but we are finding more every day. Please let us know if you find patterns that work particularly well on [Discord](https://discord.gg/J2B2vsjKuE)!
-
-- `[laughter]`
-- `[laughs]`
-- `[sighs]`
-- `[music]`
-- `[gasps]`
-- `[clears throat]`
-- `—` or `...` for hesitations
-- `♪` for song lyrics
-- CAPITALIZATION for emphasis of a word
-- `[MAN]` and `[WOMAN]` to bias Bark toward male and female speakers, respectively
-
-### Supported Languages
-
-| Language | Status |
-| --- | --- |
-| English (en) | ✅ |
-| German (de) | ✅ |
-| Spanish (es) | ✅ |
-| French (fr) | ✅ |
-| Hindi (hi) | ✅ |
-| Italian (it) | ✅ |
-| Japanese (ja) | ✅ |
-| Korean (ko) | ✅ |
-| Polish (pl) | ✅ |
-| Portuguese (pt) | ✅ |
-| Russian (ru) | ✅ |
-| Turkish (tr) | ✅ |
-| Chinese, simplified (zh) | ✅ |
-
-Requests for future language support [here](https://github.com/suno-ai/bark/discussions/111) or in the **#forums** channel on [Discord](https://discord.com/invite/J2B2vsjKuE). 
-
-## 🙏 Appreciation
-
-- [nanoGPT](https://github.com/karpathy/nanoGPT) for a dead-simple and blazing fast implementation of GPT-style models
-- [EnCodec](https://github.com/facebookresearch/encodec) for a state-of-the-art implementation of a fantastic audio codec
-- [AudioLM](https://github.com/lucidrains/audiolm-pytorch) for related training and inference code
-- [Vall-E](https://arxiv.org/abs/2301.02111), [AudioLM](https://arxiv.org/abs/2209.03143) and many other ground-breaking papers that enabled the development of Bark
-
-## © License
-
-Bark is licensed under the MIT License. 
-
-Please contact us at `bark@suno.ai` to request access to a larger version of the model.  
-
-## 📱 Community
-
-- [Twitter](https://twitter.com/OnusFM)
-- [Discord](https://discord.gg/J2B2vsjKuE)
-
-## 🎧 Suno Studio (Early Access)
-
-We’re developing a playground for our models, including Bark. 
-
-If you are interested, you can sign up for early access [here](https://3os84zs17th.typeform.com/suno-studio).
-
-## ❓ FAQ
-
-#### How do I specify where models are downloaded and cached?
-* Bark uses Hugging Face to download and store models. You can see find more info [here](https://huggingface.co/docs/huggingface_hub/package_reference/environment_variables#hfhome). 
-
-
-#### Bark's generations sometimes differ from my prompts. What's happening?
-* Bark is a GPT-style model. As such, it may take some creative liberties in its generations, resulting in higher-variance model outputs than traditional text-to-speech approaches.
-
-#### What voices are supported by Bark?  
-* Bark supports 100+ speaker presets across [supported languages](#supported-languages). You can browse the library of speaker presets [here](https://suno-ai.notion.site/8b8e8749ed514b0cbf3f699013548683?v=bc67cff786b04b50b3ceb756fd05f68c). The community also shares presets in [Discord](https://discord.gg/J2B2vsjKuE). Bark also supports generating unique random voices that fit the input text. Bark does not currently support custom voice cloning.
-
-#### Why is the output limited to ~13-14 seconds?
-* Bark is a GPT-style model, and its architecture/context window is optimized to output generations with roughly this length.
-
-#### How much VRAM do I need?
-* The full version of Bark requires around 12Gb of memory to hold everything on GPU at the same time. However, even smaller cards down to ~2Gb work with some additional settings. Simply add the following code snippet before your generation: 
-
-```python
-import os
-os.environ["SUNO_OFFLOAD_CPU"] = True
-os.environ["SUNO_USE_SMALL_MODELS"] = True
-```
-
-#### My generated audio sounds like a 1980s phone call. What's happening?
-* Bark generates audio from scratch. It is not meant to create only high-fidelity, studio-quality speech. Rather, outputs could be anything from perfect speech to multiple people arguing at a baseball game recorded with bad microphones.
+https://github.com/suno-ai/bark

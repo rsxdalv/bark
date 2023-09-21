@@ -2375,12 +2375,8 @@ def get_gpu_memory_info():
 
 def startup_status_report(quick=True, gpu_no_details=False):
     status = gpu_status_report(quick=quick, gpu_no_details=gpu_no_details)
-
-
-    # total_memory_gb, free_memory_gb, allocated_memory_gb, reserved_memory_gb = gpu_memory_info()
     
     gpu_memory_info = get_gpu_memory_info()
-    # pprint(gpu_memory_info)
     gpu_memory_free = None
     if gpu_memory_info is not None:
         gpu_memory_free = gpu_memory_info['gpu']['free']
