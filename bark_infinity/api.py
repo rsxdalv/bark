@@ -2353,29 +2353,67 @@ def history_prompt_detailed_report(history_prompt, token_samples=3):
         print(f"Error generating Fine Report: {str(e)}")
 
 
+def gb(val):
+    return round(val / (1024 ** 3), 2)
+
+def get_gpu_memory_info():
+    if not torch.cuda.is_available():
+        return None
+    
+    free, total = torch.cuda.mem_get_info()
+    used = total - free
+    stats = torch.cuda.memory_stats()
+    
+    return {
+        'gpu': {'free': gb(free), 'used': gb(used), 'total': gb(total)},
+        'gpu-active': {'current': gb(stats['active_bytes.all.current']), 'peak': gb(stats['active_bytes.all.peak'])},
+        'gpu-allocated': {'current': gb(stats['allocated_bytes.all.current']), 'peak': gb(stats['allocated_bytes.all.peak'])},
+        'gpu-reserved': {'current': gb(stats['reserved_bytes.all.current']), 'peak': gb(stats['reserved_bytes.all.peak'])},
+        'gpu-inactive': {'current': gb(stats['inactive_split_bytes.all.current']), 'peak': gb(stats['inactive_split_bytes.all.peak'])},
+        'events': {'retries': stats['num_alloc_retries'], 'oom': stats['num_ooms']}
+    }
+
 def startup_status_report(quick=True, gpu_no_details=False):
     status = gpu_status_report(quick=quick, gpu_no_details=gpu_no_details)
 
-    status += f"\nOFFLOAD_CPU: {generation.OFFLOAD_CPU} (Default is True)"
-    status += f"\nUSE_SMALL_MODELS: {generation.USE_SMALL_MODELS} (Default is False)"
-    status += f"\nGLOBAL_ENABLE_MPS (Apple): {generation.GLOBAL_ENABLE_MPS} (Default is False)"
 
-    gpu_memory = gpu_max_memory()
-    status += f"\nGPU Memory: {gpu_memory} GB"
+    # total_memory_gb, free_memory_gb, allocated_memory_gb, reserved_memory_gb = gpu_memory_info()
+    
+    gpu_memory_info = get_gpu_memory_info()
+    # pprint(gpu_memory_info)
+    gpu_memory_free = None
+    if gpu_memory_info is not None:
+        gpu_memory_free = gpu_memory_info['gpu']['free']
+        status += f"   GPU Memory Free: {gpu_memory_free:.2f} GB, Total: {gpu_memory_info['gpu']['total']:.2f} GB"
+    else:
+        status += f"   GPU Memory Free: Unknown"
 
-    if gpu_memory is not None and gpu_memory < 4.1 and gpu_memory > 2.0:
-        status += f"\n   WARNING: Your GPU memory is only {gpu_memory} GB. This is OK: enabling SUNO_HALF_PRECISION to save memory."
-        status += f"\n   However, if your GPU does have > 6GB of memory, Bark may be using your integrated GPU instead of your main GPU."
+    # Either I or Bark may a memory leak in CPU Offloading that shows up running for a long time
+    # Defaulting to off for the time being, if GPU memory allows it
+
+    if gpu_memory_free is not None and gpu_memory_free > 9.0:
+        status += f"\n   >9 GB Memory Free, CPU Offloading Disabled."
+        generation.OFFLOAD_CPU = False
+
+    status += f"\nOFFLOAD_CPU: {generation.OFFLOAD_CPU} (Default is True for < 9GB GPU Memory Free)"
+
+
+    if gpu_memory_free is not None and gpu_memory_free < 4.1 and gpu_memory_free > 2.0:
+        status += f"\n   WARNING: Your GPU memory is only {gpu_memory} GB free. This is OK: enabling SUNO_HALF_PRECISION to save memory."
+        status += f"\n   However, if your GPU does actually have > 6GB of memory, Bark may be using your integrated GPU instead of your main GPU."
+        status += f"\n   Or you have another application open using up the memory."
         status += f"\n   Recommend using smaller/faster coarse model to increase speed on a weaker GPU, with only minor quality loss."
         status += f"\n   (Go to Setting Tab, then click Apply Settings, coarse_use_small should have defaulted to checked)."
-        status += f"\n   If you are still getting memory errors, try closing all other applications. Bark can fit in 4GB, but it can be tight. If that fails you can use still use small text model (text_use_small parameter) but that does have a larger reduction in quality."
+        status += f"\n   If you are still getting memory errors, try closing all other applications. If that fails you can use still use small text model (--text_use_small parameter) but that does have a larger reduction in quality."
         generation.SUNO_HALF_PRECISION = True
+
+    status += f"\nUSE_SMALL_MODELS: {generation.USE_SMALL_MODELS} (Default is False)"
+    status += f"\nGLOBAL_ENABLE_MPS (Apple): {generation.GLOBAL_ENABLE_MPS} (Default is False)"
 
     status += f"\nSUNO_HALF_PRECISION: {generation.SUNO_HALF_PRECISION} (Default is False)"
     status += f"\nSUNO_HALF_BFLOAT16: {generation.SUNO_HALF_BFLOAT16} (Default is False)"
     status += f"\nSUNO_DISABLE_COMPILE: {generation.SUNO_DISABLE_COMPILE} (Default is False)"
 
-    # generation.get_SUNO_USE_DIRECTML()
     status += f"\nSUNO_USE_DIRECTML (AMD): {generation.SUNO_USE_DIRECTML} (Default is False)"
     num_threads = torch.get_num_threads()
     status += f"\nTorch Num CPU Threads: {num_threads}"
@@ -2391,7 +2429,6 @@ def startup_status_report(quick=True, gpu_no_details=False):
     if hugging_face_home:
         status += f"\nHF_HOME: {hugging_face_home}"
 
-    # print ffmpeg variable status
     status += f"\n\nFFmpeg status, this should say version 6.0"
     try:
         status += f"\nFFmpeg binaries directory: {ffdl.ffmpeg_version}"
