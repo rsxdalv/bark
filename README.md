@@ -53,7 +53,7 @@ Scroll down to [Bark AMD (DirectML) MANUAL Install](#bark-amd-directml-manual-in
 # How To Make Bark Faster? 
 
 1. **Tradeoff A Little Quality**: Use just the small **coarse** Bark model, leave other two models (**text** and **fine**) regular sized. You can do this in the Gradio UI or the command line with an option. 
-2. **Try the new Huggingface Bark Implementation** and see https://huggingface.co/blog/ optimizing-bark with optimization suggestions.
+2. **Try the new Huggingface Bark Implementation** and see https://huggingface.co/blog/optimizing-bark with optimization suggestions.
 3. **Try Pytorch nightly**, if you know your way around the installation.
 4. **Try optimizing numpy** and other related libraries **CPU** libraries, because bark may be bottlenecked somewhat on CPU. For example Intel MKL may be worth a shot so you could try something like this:
 5. **Linux** (or WSL) seems generally a little faster than Windows, but I'm not sure if this is always true.
@@ -78,6 +78,7 @@ This is not part of the installer because it can break things, here for people w
 ### How To Make Bark Faster on CPU or Apple hardware?
 1. On apple, try setting `SUNO_ENABLE_MPS` True
 2. Watch this repo: https://github.com/PABannier/bark.cpp
+3. New: Intel BigDL just added Bark: https://github.com/intel-analytics/BigDL/pull/9016
 
 # Who Am I?
 Sometimes I post at [twitter.com/jonathanfly](https://twitter.com/jonathanfly)
