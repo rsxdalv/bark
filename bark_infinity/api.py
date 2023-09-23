@@ -2354,32 +2354,47 @@ def history_prompt_detailed_report(history_prompt, token_samples=3):
 
 
 def gb(val):
-    return round(val / (1024 ** 3), 2)
+    return round(val / (1024**3), 2)
+
 
 def get_gpu_memory_info():
     if not torch.cuda.is_available():
         return None
-    
+
     free, total = torch.cuda.mem_get_info()
     used = total - free
     stats = torch.cuda.memory_stats()
-    
+
     return {
-        'gpu': {'free': gb(free), 'used': gb(used), 'total': gb(total)},
-        'gpu-active': {'current': gb(stats['active_bytes.all.current']), 'peak': gb(stats['active_bytes.all.peak'])},
-        'gpu-allocated': {'current': gb(stats['allocated_bytes.all.current']), 'peak': gb(stats['allocated_bytes.all.peak'])},
-        'gpu-reserved': {'current': gb(stats['reserved_bytes.all.current']), 'peak': gb(stats['reserved_bytes.all.peak'])},
-        'gpu-inactive': {'current': gb(stats['inactive_split_bytes.all.current']), 'peak': gb(stats['inactive_split_bytes.all.peak'])},
-        'events': {'retries': stats['num_alloc_retries'], 'oom': stats['num_ooms']}
+        "gpu": {"free": gb(free), "used": gb(used), "total": gb(total)},
+        "gpu-active": {
+            "current": gb(stats["active_bytes.all.current"]),
+            "peak": gb(stats["active_bytes.all.peak"]),
+        },
+        "gpu-allocated": {
+            "current": gb(stats["allocated_bytes.all.current"]),
+            "peak": gb(stats["allocated_bytes.all.peak"]),
+        },
+        "gpu-reserved": {
+            "current": gb(stats["reserved_bytes.all.current"]),
+            "peak": gb(stats["reserved_bytes.all.peak"]),
+        },
+        "gpu-inactive": {
+            "current": gb(stats["inactive_split_bytes.all.current"]),
+            "peak": gb(stats["inactive_split_bytes.all.peak"]),
+        },
+        "events": {"retries": stats["num_alloc_retries"], "oom": stats["num_ooms"]},
     }
+
 
 def startup_status_report(quick=True, gpu_no_details=False):
     status = gpu_status_report(quick=quick, gpu_no_details=gpu_no_details)
-    
+    gpu_memory_info = None
     gpu_memory_info = get_gpu_memory_info()
     gpu_memory_free = None
     if gpu_memory_info is not None:
-        gpu_memory_free = gpu_memory_info['gpu']['free']
+        gpu_memory_free = gpu_memory_info["gpu"]["free"]
+
         status += f"   GPU Memory Free: {gpu_memory_free:.2f} GB, Total: {gpu_memory_info['gpu']['total']:.2f} GB"
     else:
         status += f"   GPU Memory Free: Unknown"
@@ -2393,9 +2408,8 @@ def startup_status_report(quick=True, gpu_no_details=False):
 
     status += f"\nOFFLOAD_CPU: {generation.OFFLOAD_CPU} (Default is True for < 9GB GPU Memory Free)"
 
-
-    if gpu_memory_free is not None and gpu_memory_free < 4.1 and gpu_memory_free > 2.0:
-        status += f"\n   WARNING: Your GPU memory is only {gpu_memory} GB free. This is OK: enabling SUNO_HALF_PRECISION to save memory."
+    if gpu_memory_free is not None and gpu_memory_free < 5.9:
+        status += f"\n   WARNING: Your GPU memory is only {gpu_memory_free} GB free. This is OK: enabling SUNO_HALF_PRECISION to save memory."
         status += f"\n   However, if your GPU does actually have > 6GB of memory, Bark may be using your integrated GPU instead of your main GPU."
         status += f"\n   Or you have another application open using up the memory."
         status += f"\n   Recommend using smaller/faster coarse model to increase speed on a weaker GPU, with only minor quality loss."
