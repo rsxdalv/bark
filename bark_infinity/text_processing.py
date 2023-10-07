@@ -20,19 +20,19 @@ from collections import defaultdict
 
 from typing import List
 import re
-import random 
+import random
 from typing import Dict, Optional, Union
 import logging
+
 logger = logging.getLogger(__name__)
 
 import re
 
 
-
-
 def ordinal(n):
     """Add ordinal suffix to a number"""
-    return str(n) + ("th" if 4<=n%100<=20 else {1:"st",2:"nd",3:"rd"}.get(n%10, "th"))
+    return str(n) + ("th" if 4 <= n % 100 <= 20 else {1: "st", 2: "nd", 3: "rd"}.get(n % 10, "th"))
+
 
 def time_of_day(hour):
     """Define time of day based on hour"""
@@ -44,11 +44,12 @@ def time_of_day(hour):
         return "in the evening"
     else:
         return "at night"
-    
+
+
 def current_date_time_in_words():
     now = datetime.now()
-    day_of_week = now.strftime('%A')
-    month = now.strftime('%B')
+    day_of_week = now.strftime("%A")
+    month = now.strftime("%B")
     day = ordinal(now.day)
     year = now.year
     hour = now.hour
@@ -80,14 +81,13 @@ def current_date_time_in_words():
     else:
         time_str = hour_str + " o'clock"
 
-
     time_string = f"{day_of_week}, {month} {day}, {year}, {time_str} {time_of_day_str}."
 
     # Prepare final output
     return time_string
 
 
-#Let's keep comptability for now in case people are used to this
+# Let's keep comptability for now in case people are used to this
 # Chunked generation originally from https://github.com/serp-ai/bark-with-voice-clone
 def split_general_purpose(text, split_character_goal_length=150, split_character_max_length=200):
     # return nltk.sent_tokenize(text)
@@ -148,7 +148,9 @@ def split_general_purpose(text, split_character_goal_length=150, split_character
         elif not in_quote and (c in ";!?\n" or (c == "." and peek(1) in "\n ")):
             # seek forward if we have consecutive boundary markers but still within the max length
             while (
-                pos < len(text) - 1 and len(current) < split_character_max_length and peek(1) in "!?."
+                pos < len(text) - 1
+                and len(current) < split_character_max_length
+                and peek(1) in "!?."
             ):
                 c = seek(1)
             split_pos.append(pos)
@@ -166,8 +168,10 @@ def split_general_purpose(text, split_character_goal_length=150, split_character
 
     return rv
 
+
 def is_sentence_ending(s):
     return s in {"!", "?", ".", ";"}
+
 
 def is_boundary_marker(s):
     return s in {"!", "?", ".", "\n"}
@@ -179,7 +183,7 @@ def split_general_purpose_hm(text, split_character_goal_length=110, split_charac
         text = re.sub(r"\s+", " ", text)
         text = re.sub(r"[“”]", '"', text)
         return text
-    
+
     def _split_text(text):
         sentences = []
         sentence = ""
@@ -189,7 +193,7 @@ def split_general_purpose_hm(text, split_character_goal_length=110, split_charac
             if c == '"':
                 in_quote = not in_quote
             elif not in_quote and (is_sentence_ending(c) or c == "\n"):
-                if i < len(text) - 1 and text[i + 1] in '!?.':
+                if i < len(text) - 1 and text[i + 1] in "!?.":
                     continue
                 sentences.append(sentence.strip())
                 sentence = ""
@@ -213,20 +217,25 @@ def split_general_purpose_hm(text, split_character_goal_length=110, split_charac
     cleaned_text = clean_text(text)
     sentences = _split_text(cleaned_text)
     wrapped_sentences = [textwrap.fill(s, width=split_character_goal_length) for s in sentences]
-    chunks = [chunk for s in wrapped_sentences for chunk in s.split('\n')]
+    chunks = [chunk for s in wrapped_sentences for chunk in s.split("\n")]
     combined_chunks = recombine_chunks(chunks)
-    
+
     return combined_chunks
 
 
-
-def split_text(text: str, split_type: Optional[str] = None, split_type_quantity = 1, split_type_string: Optional[str] = None, split_type_value_type: Optional[str] = None) -> List[str]:
-    if text == '':
+def split_text(
+    text: str,
+    split_type: Optional[str] = None,
+    split_type_quantity=1,
+    split_type_string: Optional[str] = None,
+    split_type_value_type: Optional[str] = None,
+) -> List[str]:
+    if text == "":
         return [text]
 
     # the old syntax still works if you don't use this parameter, ie
     # split_type line, split_type_value 4, splits into groups of 4 lines
-    if split_type_value_type == '':
+    if split_type_value_type == "":
         split_type_value_type = split_type
 
     """
@@ -238,70 +247,98 @@ def split_text(text: str, split_type: Optional[str] = None, split_type_quantity 
         # print(chunks)
         return chunks
     """
-    if split_type == 'string' or split_type == 'regex':
-
+    if split_type == "string" or split_type == "regex":
         if split_type_string is None:
             logger.warning(
-                f"Splitting by {split_type} requires a string to split by. Returning original text.")
+                f"Splitting by {split_type} requires a string to split by. Returning original text."
+            )
             return [text]
 
     split_type_to_function = {
-        'word': split_by_words,
-        'line': split_by_lines,
-        'sentence': split_by_sentence,
-        'string': split_by_string,
-        'char' : split_by_char,
+        "word": split_by_words,
+        "line": split_by_lines,
+        "sentence": split_by_sentence,
+        "string": split_by_string,
+        "char": split_by_char,
         #'random': split_by_random,
         # 'rhyme': split_by_rhymes,
         # 'pos': split_by_part_of_speech,
-        'regex': split_by_regex,
+        "regex": split_by_regex,
     }
-
-
 
     if split_type in split_type_to_function:
         # split into groups of 1 by the desired type
         # this is so terrible even I'm embarassed, destroy all this code later, but I guess it does something useful atm
-        segmented_text = split_type_to_function[split_type](text, split_type = split_type, split_type_quantity=1, split_type_string=split_type_string, split_type_value_type=split_type_value_type)
+        segmented_text = split_type_to_function[split_type](
+            text,
+            split_type=split_type,
+            split_type_quantity=1,
+            split_type_string=split_type_string,
+            split_type_value_type=split_type_value_type,
+        )
         final_segmented_text = []
-        current_segment = ''
+        current_segment = ""
         split_type_quantity_found = 0
 
         if split_type_value_type is None:
             split_type_value_type = split_type
-            
-        for seg in segmented_text: # for each line, for example, we can now split by 'words' or whatever, as a counter for when to break the group
+
+        for (
+            seg
+        ) in (
+            segmented_text
+        ):  # for each line, for example, we can now split by 'words' or whatever, as a counter for when to break the group
             current_segment += seg
 
-            #print(split_type_to_function[split_type](current_segment, split_type=split_type_value_type, split_type_quantity=1, split_type_string=split_type_string))
-            split_type_quantity_found = len(split_type_to_function[split_type_value_type](current_segment, split_type=split_type_value_type, split_type_quantity=1, split_type_string=split_type_string))
-            #print(f"I see {split_type_quantity_found} {split_type_value_type} in {current_segment}")
+            # print(split_type_to_function[split_type](current_segment, split_type=split_type_value_type, split_type_quantity=1, split_type_string=split_type_string))
+            split_type_quantity_found = len(
+                split_type_to_function[split_type_value_type](
+                    current_segment,
+                    split_type=split_type_value_type,
+                    split_type_quantity=1,
+                    split_type_string=split_type_string,
+                )
+            )
+            # print(f"I see {split_type_quantity_found} {split_type_value_type} in {current_segment}")
             if split_type_quantity_found >= int(split_type_quantity):
                 final_segmented_text.append(current_segment)
                 split_type_quantity_found = 0
-                current_segment = ''
-            
+                current_segment = ""
+
         if current_segment != "":
             final_segmented_text.append(current_segment)
 
         return final_segmented_text
 
-    logger.warning(
-        f"Splitting by {split_type} not a supported option. Returning original text.")
+    logger.warning(f"Splitting by {split_type} not a supported option. Returning original text.")
     return [text]
 
-def split_by_string(text: str, split_type: Optional[str] = None, split_type_quantity: Optional[int] = 1, split_type_string: Optional[str] = None, split_type_value_type: Optional[str] = None) -> List[str]:
+
+def split_by_string(
+    text: str,
+    split_type: Optional[str] = None,
+    split_type_quantity: Optional[int] = 1,
+    split_type_string: Optional[str] = None,
+    split_type_value_type: Optional[str] = None,
+) -> List[str]:
     if split_type_string is not None:
         split_pattern = f"({split_type_string})"
         split_list = re.split(split_pattern, text)
         result = [split_list[0]]
         for i in range(1, len(split_list), 2):
-            result.append(split_list[i] + split_list[i+1])
+            result.append(split_list[i] + split_list[i + 1])
         return result
     else:
         return text.split()
 
-def split_by_regex(text: str, split_type: Optional[str] = None, split_type_quantity: Optional[int] = 1, split_type_string: Optional[str] = None, split_type_value_type: Optional[str] = None) -> List[str]:
+
+def split_by_regex(
+    text: str,
+    split_type: Optional[str] = None,
+    split_type_quantity: Optional[int] = 1,
+    split_type_string: Optional[str] = None,
+    split_type_value_type: Optional[str] = None,
+) -> List[str]:
     chunks = []
     start = 0
     if split_type_string is not None:
@@ -315,26 +352,58 @@ def split_by_regex(text: str, split_type: Optional[str] = None, split_type_quant
     else:
         return text.split()
 
-def split_by_char(text: str, split_type: Optional[str] = None, split_type_quantity = 1, split_type_string: Optional[str] = None, split_type_value_type: Optional[str] = None) -> List[str]:
+
+def split_by_char(
+    text: str,
+    split_type: Optional[str] = None,
+    split_type_quantity=1,
+    split_type_string: Optional[str] = None,
+    split_type_value_type: Optional[str] = None,
+) -> List[str]:
     return list(text)
 
-def split_by_words(text: str, split_type: Optional[str] = None, split_type_quantity = 1, split_type_string: Optional[str] = None, split_type_value_type: Optional[str] = None) -> List[str]:
-    
-    return [word + ' ' for word in text.split() if text.strip()]
-    #return [' '.join(words[i:i + split_type_quantity]) for i in range(0, len(words), split_type_quantity)]
+
+def split_by_words(
+    text: str,
+    split_type: Optional[str] = None,
+    split_type_quantity=1,
+    split_type_string: Optional[str] = None,
+    split_type_value_type: Optional[str] = None,
+) -> List[str]:
+    return [word + " " for word in text.split() if text.strip()]
+    # return [' '.join(words[i:i + split_type_quantity]) for i in range(0, len(words), split_type_quantity)]
 
 
-def split_by_lines(text: str, split_type: Optional[str] = None, split_type_quantity = 1, split_type_string: Optional[str] = None, split_type_value_type: Optional[str] = None) -> List[str]:
-    lines = [line + '\n' for line in text.split('\n') if line.strip()]
+def split_by_lines(
+    text: str,
+    split_type: Optional[str] = None,
+    split_type_quantity=1,
+    split_type_string: Optional[str] = None,
+    split_type_value_type: Optional[str] = None,
+) -> List[str]:
+    lines = [line + "\n" for line in text.split("\n") if line.strip()]
     return lines
-    #return ['\n'.join(lines[i:i + split_type_quantity]) for i in range(0, len(lines), split_type_quantity)]
+    # return ['\n'.join(lines[i:i + split_type_quantity]) for i in range(0, len(lines), split_type_quantity)]
 
-def split_by_sentence(text: str, split_type: Optional[str] = None, split_type_quantity: Optional[int] = 1, split_type_string: Optional[str] = None, split_type_value_type: Optional[str] = None) -> List[str]:
-    import nltk  
+
+def split_by_sentence(
+    text: str,
+    split_type: Optional[str] = None,
+    split_type_quantity: Optional[int] = 1,
+    split_type_string: Optional[str] = None,
+    split_type_value_type: Optional[str] = None,
+) -> List[str]:
+    import nltk  # type: ignore
+
+    try:
+        nltk.data.find("tokenizers/punkt")
+    except LookupError:
+        nltk.download("punkt")
+
     text = text.replace("\n", " ").strip()
     sentences = nltk.sent_tokenize(text)
-    return [sentence + ' ' for sentence in sentences]
-    #return [' '.join(sentences[i:i + split_type_quantity]) for i in range(0, len(sentences), split_type_quantity)]
+    return [sentence + " " for sentence in sentences]
+    # return [' '.join(sentences[i:i + split_type_quantity]) for i in range(0, len(sentences), split_type_quantity)]
 
 
 """
@@ -343,6 +412,7 @@ def split_by_sentences(text: str, n: int, language="en") -> List[str]:
     sentences = seg.segment(text)
     return [' '.join(sentences[i:i + n]) for i in range(0, len(sentences), n)]
 """
+
 
 def load_text(file_path: str) -> Union[str, None]:
     try:
@@ -356,7 +426,8 @@ def load_text(file_path: str) -> Union[str, None]:
         logger.error(f"Permission denied to read the file: {file_path}")
     except Exception as e:
         logger.error(
-            f"An unexpected error occurred while reading the file: {file_path}. Error: {e}")
+            f"An unexpected error occurred while reading the file: {file_path}. Error: {e}"
+        )
     return None
 
 
@@ -469,6 +540,3 @@ def split_by_part_of_speech(text: str, pos_pattern: str) -> List[str]:
 
     return chunks
 """
-
-
-

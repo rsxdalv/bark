@@ -12,6 +12,7 @@ import numpy
 import torch
 from torch import nn, optim
 from torch.serialization import MAP_LOCATION
+from typing import Union
 
 
 class CustomTokenizer(nn.Module):
@@ -156,7 +157,9 @@ class Data:
         return json.dumps(data)
 
 
-def auto_train(data_path, save_path="model.pth", load_model: str | None = None, save_epochs=1):
+def auto_train(
+    data_path, save_path="model.pth", load_model: Union[str, None] = None, save_epochs=1
+):
     data_x, data_y = [], []
 
     if load_model and os.path.isfile(load_model):
