@@ -52,6 +52,21 @@ Scroll down to [Bark AMD (DirectML) MANUAL Install](#bark-amd-directml-manual-in
 2. Bark Speaker Directory from rsxdalv: https://github.com/rsxdalv/bark-speaker-directory
 3. You can nag me in Discord and if I'm online I might have some handy. 
 4. Wait: I keep meaning to organize a bunch of good voices and update this repo.
+
+# How to use .srt subtitles as bark input?
+
+I added an extremely basic way to do this over here but might still be useful. All this does it basically remove non-speech text from the .srt file so you can use it as a regular prompt. It doesn't add the new audio into a new video file or generate new subtitles, etc. Just inputs. 
+
+![image](https://github.com/JonathanFly/bark/assets/163408/83403dcc-29cf-4baf-8a09-b3178a663057)
+
+1. Copy .SRT text file content and paste it into text prompt field.
+2. Run SRT text transformations in order. 1,2,3 etc. You can decide whether or not to leave the [action] text in, *sometimes* things like [grunts] work in Bark, depending on the voice.
+3. Decide how you want to split the text:
+   
+**Render an audio segment for each original subtitle:** After step two, your text input field should have the dialog in each subtitle on its own line in the text prompt. To render each line as segment, choose "advanced text splitting" and "Option 1" in the image. Process chunks of: "line", group by  "line", start new clip when: "1". Because some subtitles have no dialog the number of segments may not line up be the same as the original subtitle file. If you want it to match you may want to skip step 5.
+
+**Render audio segments for the content, generally:** Split the text normally how you would in Bark. This just ignores lines and counts by sentences, words, etc. For example "Option 2" is a common split: process chunks of: "sentence", group by: "word", start new clip when: "20". That will split by sentences and add new sentences until total words is over 20, then start a new segment. 
+
 # How To Make Bark Faster? 
 
 1. **Tradeoff A Little Quality**: Use just the small **coarse** Bark model, leave other two models (**text** and **fine**) regular sized. You can do this in the Gradio UI or the command line with an option. 
