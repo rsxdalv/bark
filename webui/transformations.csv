@@ -1,4 +1,14 @@
 ﻿name,regex,replacement,flags,long_description
-Add ♪'s to Beginning and End of Each Line,^(.*)$,♪ \1 ♪,MULTILINE,Add a music note to the front and back of each line
-Remove Periods To Look Like Song Lyrics,[\.?],, MULTILINE,"Strip out periods, question marks, and commas. May help the text look more like a song lyrics."
-Remove Extra Blank Lines,"(\n\s*){2,}",\n\n,MULTILINE,Replace multiple consecutive newline characters with a single newline
+SRT 1: Convert .SRT Text to MultiLine Text Prompts,"^[\d]+[\d:, ->]*\n",,MULTILINE,Convert Subtitles SRT file to raw text - split text by sentences etc after.
+SRT 2: Combine Multi-Line Subtitles Into Single Line,"(?<=\S)\n(?=\S)"," ",MULTILINE,Combine multiple lines of text into a single line. Useful for subtitles.
+SRT 3: Remove Dash At Start Of Line,"^-",,MULTILINE,'Removes any `-` character which is at the start of a line.'
+SRT 4: Strip All Tags But Leave Content,"<[^>]*>",,MULTILINE,'Removes <sometext>, and also remove the </sometext> tag, but any text outside the actual < and > characters should remain.'
+SRT 5 (Optional): Remove Action Text In Brackets [],"\[[^\]]*\]",,MULTILINE,'Removes both the [ and ] characters and also content inside them [text to be removed] in all places in the text.'
+MUSIC: Add ♪'s to Beginning and End of Each Line,"^([^\s]{1,})$",♪ \1 ♪,MULTILINE,Add a music note to the front and back of each line
+MUSIC: Remove Periods And Question Marks To Look Like Song Lyrics,[\.?],, MULTILINE,"Strip out periods, question marks, and commas. May help the text look more like a song lyrics."
+Remove All Newlines,\n,,MULTILINE,Remove all newlines
+Remove Only Empty Blank Lines,"(\n\s*){2,}",\n\n,MULTILINE,Replace multiple consecutive newline characters with a single newline
+Replace '\n' Strings With Spaces,\\n, ,MULTILINE,Replace newline strings with spaces
+Replace '\n' String With Actual Newline,\\n,\n,MULTILINE,Replace newline strings with actual newlines
+Add Dramatic Pauses,!,...!,MULTILINE,"Replace punctuation like ""!"" with ""...!"" for more dramatic audio."
+Remove Stop Words,\b(?:the|and|is|of|to|in|that|it|you|was|for|on|as|with|he|at|this)\b,,MULTILINE,Remove common stop words for strange but fun output.

@@ -535,6 +535,7 @@ def generate_audio_long_gradio(
         process_text_by_each is not None
         and process_text_by_each != ""
         and process_text_by_each != []
+        and not isinstance(process_text_by_each, list)
     ):
         kwargs["process_text_by_each"] = process_text_by_each
 
