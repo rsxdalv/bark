@@ -1,5 +1,7 @@
 # 🚀 BARK INFINITY: A Voice Is A Sound and a Sound Is a Voice 🎶 🌈✨🚀 
 
+![screenshot](./bark_infinity/assets/screenshot.JPG)
+
 ### Colab Notebooks: These need updating, but they should work soon if they have a problem at the moment.
 [![Open In Colab](https://tinyurl.com/3m5bcd9h)](https://colab.research.google.com/github/steinhaug/bark-infinity/blob/main/notebooks/Bark-Infinity.ipynb)
 [![Open In Colab](https://tinyurl.com/jjbfsbk2)](https://colab.research.google.com/github/steinhaug/bark-infinity/blob/main/notebooks/Bark_Infinity_Long_Form_Audio_Colab.ipynb)
