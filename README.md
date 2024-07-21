@@ -1,3 +1,5 @@
+# Extension version
+
 # 🚀 BARK INFINITY: A Voice Is A Sound and a Sound Is a Voice 🎶 🌈✨🚀 
 
 ![screenshot](./bark_infinity/assets/screenshot.JPG)
